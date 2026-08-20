@@ -92,11 +92,12 @@ void ofApp::audioOut(ofSoundBuffer& buffer) {
 	size_t numChannels = buffer.getNumChannels();
 
 
-	for (size_t i = 0; i < numFrames; ++i) {
+	for (size_t i = 0; i < numFrames; i++) {
 		float sample = sinf(phase * TWO_PI);	// sine wave in range -1 to 1
 
 		buffer[i * numChannels] = sample;			// left channel
 		buffer[i * numChannels + 1] = sample;	// right channel
+		
 		phase += phaseStep;
 		if (phase >= 1.0f) {
 			phase -= 1.0f;	// wrap phase back to 0 when it reaches 1
