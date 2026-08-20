@@ -20,5 +20,13 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+
+		// Firefly additions to standard template
+		void audioOut(ofSoundBuffer& buffer);
+
+private:
+	ofSoundStream soundStream;
+	float phase;			// runs from 0 to 1 per cycle (not 0 to 2*pi)
+	float phaseStep;		// how far the phase moves each sample
 		
 };
