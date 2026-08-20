@@ -3,9 +3,17 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofBackground(20);
+	ofSetWindowTitle("CC2 Project 2 - Team Firefly");
+	ofSetFrameRate(60);
+
+	sampleRate = 44100;
+	bufferSize = 512;
+
+	// Synth allocates every voice and every buffer here
+	synth.setup(sampleRate, bufferSize);
 	
-	phase = 0.0f;
-	phaseStep = 440.0f / 44100.0f;	// 440 Hz tone at 44100 samples/sec (fraction of a cycle per sample)
+	//phase = 0.0f;
+	//phaseStep = 440.0f / 44100.0f;	// 440 Hz tone at 44100 samples/sec (fraction of a cycle per sample)
 
 	ofSoundStreamSettings settings;
 	settings.setOutListener(this);	// set the audioOut() method to be called when audio is needed		
@@ -88,6 +96,9 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 // It is also important to avoid using any variables that are being modified in the main thread (e.g. in update() or keyPressed()) without some kind of mutex lock, because the main thread and the audio thread can access those variables at the same time, which can cause crashes or other problems.
 //--------------------------------------------------------------
 void ofApp::audioOut(ofSoundBuffer& buffer) {
+	// The commented out code below was to test audio generation. It is not needed for the final project, but it is left here for reference in case we want to experiment with generating audio in the future.
+
+	/*
 	size_t numFrames = buffer.getNumFrames();
 	size_t numChannels = buffer.getNumChannels();
 
@@ -103,4 +114,8 @@ void ofApp::audioOut(ofSoundBuffer& buffer) {
 			phase -= 1.0f;	// wrap phase back to 0 when it reaches 1
 		}
 	}
+	*/
+	// end of test audio generation code
+
+	synth.render(buffer);
 }
