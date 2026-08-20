@@ -55,52 +55,43 @@ void Visualiser::drawSpectrum() {
     float w  = ofGetWidth();
     float h  = ofGetHeight();
 
-    // spectrum lives between 58% and 85% of screen height
     float specTop    = h * 0.58f;
     float specHeight = h * 0.27f;
     float specBottom = specTop + specHeight;
 
-    // ofSoundGetSpectrum returns a pointer to a static array — copy it
     float* raw = ofSoundGetSpectrum(NUM_BINS);
 
-    // log-scale x mapping so low frequencies (where all the music is) get more space
-    // bin 0 is DC (skip it), bins 1–255 map onto screen width
     float barW = w / (float)(NUM_BINS - 1);
 
     for (int i = 1; i < NUM_BINS; i++) {
-        // logarithmic x position
-        float t    = (float)i / (float)(NUM_BINS - 1);   // 0 to 1
-        float xLog = log(1.0f + t * 99.0f) / log(100.0f); // log scale 0 to 1
+        // log scale so bass gets more space
+        float t    = (float)i / (float)(NUM_BINS - 1);
+        float xLog = log(1.0f + t * 99.0f) / log(100.0f);
         float x    = xLog * w;
 
         float amp  = raw[i];
-
-        // clamp just in case
         if (amp < 0) amp = 0;
         if (amp > 1) amp = 1;
 
         float barH = amp * specHeight;
 
-        // colour shifts from green (low) to cyan (high)
+        // green to cyan
         float hue = ofMap(i, 1, NUM_BINS - 1, 120, 180);
         ofColor c;
         c.setHsb(hue, 200, 220);
         ofSetColor(c);
 
-        // draw bar from bottom upward
         ofDrawRectangle(x, specBottom - barH, barW, barH);
     }
 
-    // baseline
     ofSetColor(60, 60, 60);
     ofSetLineWidth(1);
     ofDrawLine(0, specBottom, w, specBottom);
 
-    // label
     ofSetColor(100, 100, 100);
     ofDrawBitmapString("SPECTRUM  (log scale)", 8, specTop + 14);
 
-    // frequency tick marks at musically useful spots
+    // frequency labels
     struct Tick { float freq; std::string label; };
     std::vector<Tick> ticks = {
         {100,  "100"},
@@ -112,7 +103,6 @@ void Visualiser::drawSpectrum() {
 
     float sampleRate = 44100.0f;
     for (auto& tick : ticks) {
-        // bin index for this frequency
         float binF = tick.freq / (sampleRate / (float)(NUM_BINS * 2));
         if (binF < 1 || binF >= NUM_BINS) continue;
 
