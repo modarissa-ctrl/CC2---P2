@@ -16,7 +16,7 @@ public:
     SampleVoice();
 
     // load the clip into memory - call this in setup(), not during audio playback
-    bool load(string filename);
+    bool load(string filename, float targetRate = 44100.0f);
 
     // SoundSource interface
     float nextSample();

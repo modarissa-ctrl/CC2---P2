@@ -1,10 +1,11 @@
 #pragma once
 
+#include "ofMain.h"
 #include "SoundSource.h"
 #include "SineVoice.h"
 #include "PulseVoice.h"
 #include "NoiseVoice.h"
-
+#include "SampleVoice.h"
 #include <vector>
 #include <string>
 #include <mutex>
@@ -35,7 +36,7 @@ public:
 	int getVoiceType() const;
 	std::string getVoiceTypeName() const;
 
-	bool loadClip(int clipIndex, const std::string& filePath);
+	bool loadClip(int clipIndex, const std::string& filename);
 
 	static const int MELODIC_SLOTS = 5;		// Slots 0 - 4
 	static const int CLIP_SLOTS = 3;		// Slots 5 - 7
@@ -48,7 +49,8 @@ private:
 	std::vector<SineVoice> sineVoices;
 	std::vector<PulseVoice> pulseVoices;
 	std::vector<NoiseVoice> noiseVoices;
-	
+	std::vector<SampleVoice> clipVoices;
+
 	// List of pointers to every voice above. Showcases Polymorphism via render() which uses this list but never knows which actual class it is talking to
 	std::vector<SoundSource*> allVoices;
 

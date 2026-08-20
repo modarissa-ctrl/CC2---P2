@@ -25,16 +25,24 @@ void InputMapper::buildKeyMap() {
 
     // clip keys use the last 3 slots in the pool
     // TODO: confirm these slot numbers with Ronald
+    // Modar - confirmed: Pool = 8, slots 0-4 = melodic, slots 5-7 = SampleVoice
     clipSlots[0] = 5;
     clipSlots[1] = 6;
     clipSlots[2] = 7;
 }
 
 void InputMapper::keyPressed(int key) {
+    // Modar - adding these to introduce addition different sounds (brief is clear - at least three different sounds playable by user)
+    if (key == 'q') { synth->setVoiceType(0); return; }   // sine
+    if (key == 'w') { synth->setVoiceType(1); return; }   // pulse
+    if (key == 'e') { synth->setVoiceType(2); return; }   // noise
+
+
     // keys 1 2 3 trigger the clips
-    if (key == '1') { synth->noteOn(0, clipSlots[0]);  return; }
-    if (key == '2') { synth->noteOn(0, clipSlots[1]);  return; }
-    if (key == '3') { synth->noteOn(0, clipSlots[2]);  return; }
+    // Modar - the order of arguments was  i.e. 0, clipSlots[0] instead of clipSlots[0], 0. Tweaked second argument (freq) to float as well
+    if (key == '1') { synth->noteOn(clipSlots[0], 0.0f);  return; }
+    if (key == '2') { synth->noteOn(clipSlots[1], 0.0f);  return; }
+    if (key == '3') { synth->noteOn(clipSlots[2], 0.0f);  return; }
 
     // don't retrigger if already held
     if (keyVoiceMap.count(key)) return;
@@ -46,7 +54,8 @@ void InputMapper::keyPressed(int key) {
     voiceCounter++;
 
     keyVoiceMap[key] = slot;
-    synth->noteOn(keyFreqMap[key], slot);
+    // Modar - same incorrect argument order - fixed
+    synth->noteOn(slot, keyFreqMap[key]);
 }
 
 void InputMapper::keyReleased(int key) {
