@@ -11,5 +11,10 @@ public:
     virtual void noteOff() = 0;
     virtual bool isActive() = 0;
 
+	// Added this since Synth needs to set the sample rate for voices that need it (e.g., SampleVoice).
+	// Not purely virtual since it has a default body but it can be overridden by derived classes that need to do something with the sample rate.
+	virtual void setSampleRate(float sampleRate) { (void)sampleRate; }
+
     virtual ~SoundSource() {}
+
 };
