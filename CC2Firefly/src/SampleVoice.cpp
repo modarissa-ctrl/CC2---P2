@@ -1,5 +1,6 @@
 #include "SampleVoice.h"
-#include<cmath>
+#include "WavLoader.h"
+#include <cmath>
 
 SampleVoice::SampleVoice() {
     this->playHead = 0;
@@ -7,6 +8,8 @@ SampleVoice::SampleVoice() {
 }
 
 bool SampleVoice::load(string filename, float targetRate) {
+    // Buggy ofSoundFile based code commented out below, entirely new implementation based on custom Wav loader
+    /*
     // load the audio file before the app starts playing anything
     ofSoundFile file;
 
@@ -44,6 +47,28 @@ bool SampleVoice::load(string filename, float targetRate) {
     cout << "SampleVoice: loaded " << filename << " (" << samples.size() << " samples)" << endl;
 
     return samples.size() > 0;
+    */
+
+    // Read the file up front, in setup(). Never on the audio thread.
+    WavLoader loader;
+
+    if (!loader.load(ofToDataPath(filename), targetRate)) {
+        ofLogError() << "SampleVoice: " << filename << ": " << loader.getError();
+        return false;
+    }
+
+    samples = loader.getSamples();
+
+    envelope.setSampleRate(targetRate);
+
+    envelope.setADSR(0.002f, 0.010f, 1.0f, 0.030f);
+
+    ofLogNotice() << "SampleVoice: loaded " << filename
+        << " (" << samples.size() << " samples, source "
+        << loader.getSourceSampleRate() << "Hz "
+        << loader.getSourceChannels() << "ch)";
+
+    return !samples.empty();
 }
 
 float SampleVoice::nextSample() {
