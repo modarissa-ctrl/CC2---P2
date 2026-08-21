@@ -38,27 +38,40 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+	visualiser->update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	ofDrawBitmapStringHighlight("Press any key to stop the sound (if any!)", 20, 20);
+	//ofDrawBitmapStringHighlight("Press any key to stop the sound (if any!)", 20, 20);
+	visualiser->draw(0, 0, ofGetWidth(), ofGetHeight());
+	visualiser->drawInfo(inputMapper->getActiveNoteNames(), 12, ofGetHeight() - 78);
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+	inputMapper->keyPressed(key);
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-
+	inputMapper->keyPressed(key);
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
+	inputMapper->mouseMoved(x, y, ofGetWidth(), ofGetHeight());
+}
 
+void ofApp::exit()
+{
+	// Important: stop the audio thread first
+	soundStream.close();
+
+	delete inputMapper;
+	delete visualiser;
+	inputMapper = NULL;
+	visualiser = NULL;
 }
 
 
